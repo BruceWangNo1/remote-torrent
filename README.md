@@ -18,7 +18,7 @@ Install [anacrolix/torrent](https://github.com/anacrolix/torrent) first on your 
 
 ## Command Usage
 
-Server side: `rt server yourPortNumber username:password`
+Server side: `rt server yourPortNumber username:password`  
 Client side: `rt client username:password yourServerIP:yourServerPortNumber magnetLink`
 
 ## Contribution
