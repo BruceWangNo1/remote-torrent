@@ -6,8 +6,21 @@ This repository is an extension to [anacrolix/torrent](https://github.com/anacro
 
 ## Installation
 
-Install the library package with `go get github.com/brucewangno1/remote-torrent`.
+Install the library package with `go get github.com/brucewangno1/remote-torrent/rt`.
 
-## Commands
+## Develpment Enviroment
 
-Here I'll describe what some of the provided commands.
+Ubuntu on server side and MacOS on client side.
+
+## Requirement
+
+Install [anacrolix/torrent](https://github.com/anacrolix/torrent) first on your server and wget on your client via brew.
+
+## Command Usage
+
+Server side: `rt server yourPortNumber username:password`
+Client side: `rt client username:password yourServerIP:yourServerPortNumber magnetLink`
+
+## Contribution
+
+Looking forward to your contribution.
