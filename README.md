@@ -4,7 +4,7 @@ Download Torrent Remotely and Retrieve Files Over HTTP at Full Speed without ISP
 This repository is an extension to [anacrolix/torrent](https://github.com/anacrolix/torrent) project to download torrent remotely to your server like your VPS and retrieve the downloaded files to your local machine over HTTP. As we know, some ISPs implement torrent limitation and also sometimes downloading torrent locally does not work well. So this is why I start this project.
 
 ## Notice
-Before installation, I think it is better for you to know that there is great web implementation [jpillora/torrent](https://github.com/jpillora/cloud-torrent) providing similar functionalities while offering great visual aids. You may still want to use this project if you want a simpler usage approach with just a single command on client side that takes care of everything for you.
+Before installation, I think it is better for you to know that there is great web implementation [jpillora/cloud-torrent](https://github.com/jpillora/cloud-torrent) providing similar functionalities while offering great visual aids. You may still want to use this project if you want a simpler usage approach with just a single command on client side that takes care of everything for you.
 
 ## Installation
 
