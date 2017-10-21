@@ -8,7 +8,7 @@ This repository is an extension to [anacrolix/torrent](https://github.com/anacro
 
 Install the library package with `go get github.com/brucewangno1/remote-torrent/rt`.
 
-## Develpment Enviroment
+## Development Enviroment
 
 Ubuntu on server side and MacOS on client side.
 
