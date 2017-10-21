@@ -10,7 +10,7 @@ Before installation, I think it is better for you to know that there is great we
 
 Install the library package with `go get github.com/brucewangno1/remote-torrent/rt`.
 
-## Develpment Enviroment
+## Development Enviroment
 
 Ubuntu on server side and MacOS on client side.
 
@@ -20,7 +20,7 @@ Install [anacrolix/torrent](https://github.com/anacrolix/torrent) first on your 
 
 ## Command Usage
 
-Server side: `rt server yourPortNumber username:password`
+Server side: `rt server yourPortNumber username:password`  
 Client side: `rt client username:password yourServerIP:yourServerPortNumber magnetLink`
 
 ## Contribution
