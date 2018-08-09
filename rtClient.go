@@ -4,19 +4,33 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"fmt"
 	"io/ioutil"
 	"time"
 	"os/exec"
-	"log"
 	"os"
 )
 
 func RTClient(args []string)  {
 	username := strings.Split(args[0], ":")[0]
 	password := strings.Split(args[0], ":")[1]
+	if username == "" || password == "" {
+		Error.Println("username and password not specified")
+		os.Exit(0)
+	} else if len(password) < 7 {
+		Warning.Println("password too short")
+	}
+
 	ipAndPort := args[1]
+	if ipAndPort == "" {
+		Error.Println("IP address and port not specified")
+		os.Exit(0)
+	}
+
 	magnet := args[2]
+	if magnet == "" {
+		Error.Println("magnet link not specified")
+		os.Exit(0)
+	}
 
 	//finished := make(chan error, 2)
 	//
@@ -43,15 +57,15 @@ func RTClient(args []string)  {
 	for {
 		schedulingResp, err := http.PostForm("http://" + ipAndPort + "/magnet", url.Values{"username": {username}, "password": {password}, "magnet": {magnet}})
 		if err != nil {
-			fmt.Println(err)
-			fmt.Println("retrying...")
+			Error.Println(err)
+			Info.Println("retrying...")
 			continue
 		} else {
-			fmt.Println("Torrent download scheduling over http succeeds.")
+			Info.Println("Torrent download scheduling over http succeeds")
 		}
 
 		if schedulingResp.StatusCode == http.StatusUnauthorized {
-			log.Fatal("Authentication failed.")
+			Error.Println("Authentication failed")
 			return
 		}
 
@@ -59,12 +73,12 @@ func RTClient(args []string)  {
 		schedulingResp.Body.Close()
 
 		if err != nil {
-			fmt.Println(err)
-			fmt.Println("retrying...")
+			Error.Println(err)
+			Info.Println("retrying...")
 			continue
 		}
 
-		fmt.Println(string(body))
+		Info.Println(string(body))
 		break
 	}
 
@@ -74,43 +88,42 @@ func RTClient(args []string)  {
 	for range ticker.C {
 		statusCheckResp, statusCheckErr := http.PostForm("http://" + ipAndPort + "/status", url.Values{"username": {username}, "password": {password}})
 		if statusCheckErr != nil {
-			fmt.Println(statusCheckErr)
+			Error.Println(statusCheckErr)
 		}
 
 		if statusCheckResp.StatusCode == http.StatusUnauthorized {
-			log.Fatal("Authentication failed.")
+			Error.Println("Authentication failed.")
 			return
 		}
 
 		body, err := ioutil.ReadAll(statusCheckResp.Body)
 		if err != nil {
-			fmt.Println(err)
+			Error.Println(err)
 		}
 
-		fmt.Printf("\rStatus check: %s.", string(body))
+		Info.Printf("Status check: %s\n", string(body))
 
 		statusCheckResp.Body.Close()
 
-		if strings.Contains(string(body), "Torrent Download Finished.") {
-			fmt.Println("\nTorrent download completed 100% on server side.")
+		if strings.Contains(string(body), "Torrent Download Finished") {
+			Info.Println("Torrent download completed 100% on server side")
 			break
 		}
 	}
 	ticker.Stop()
-	close(ticker)
 
 	// download files from server's directory
 	for {
 		_, err := exec.LookPath("wget")
 		if err != nil {
-			log.Fatal("Please install wget on your local machine first.\n")
+			Error.Println("Please install wget on your local machine first")
 			return
 		}
-		cmd := exec.Command("wget", "-r", "--post-data", "username=" + username + "&password=" + password, "http://" + ipAndPort + "/")
+		cmd := exec.Command("wget", "-r", "--post-data", "username=" + username + "&password=" + password, "http://" + ipAndPort + "/files/")
 		cmd.Stderr = os.Stdout
 		err = cmd.Run()
 		if err != nil {
-			log.Fatal("Error starting wget: %v", err)
+			Error.Printf("Error starting wget: %v\n", err)
 		}
 
 		//go func() {
@@ -118,7 +131,7 @@ func RTClient(args []string)  {
 		//}()
 
 
-		fmt.Println("Torrent successfully retrieved to client.")
+		Info.Println("Torrent successfully retrieved to client")
 		break
 	}
 
@@ -126,13 +139,13 @@ func RTClient(args []string)  {
 	for {
 		removeTorrentResponse, removeTorrentErr := http.PostForm("http://" + ipAndPort + "/remove", url.Values{"username": {username}, "password": {password}})
 		if removeTorrentErr != nil {
-			fmt.Println(removeTorrentErr)
-			fmt.Println("retrying...")
+			Error.Println(removeTorrentErr)
+			Info.Println("retrying...")
 			continue
 		}
 
 		if removeTorrentResponse.StatusCode == http.StatusUnauthorized {
-			log.Fatal("Authentication failed.")
+			Error.Println("Authentication failed")
 			return
 		}
 
@@ -140,10 +153,10 @@ func RTClient(args []string)  {
 		removeTorrentResponse.Body.Close()
 
 		if err != nil {
-			fmt.Println(err)
+			Error.Println(err)
 			continue
 		}
-		fmt.Println(string(body))
+		Info.Println(string(body))
 		break
 	}
 

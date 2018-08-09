@@ -7,44 +7,44 @@ import (
 	"os/exec"
 	"os"
 	"log"
-	"github.com/gorilla/mux"
+	"time"
 )
 var (
 	port string
 	username string
 	password string
-	//downloadFinished chan string
+	downloadFinished chan string
 
-	info *log.Logger
-	warning *log.Logger
-	error *log.Logger
+	Info *log.Logger
+	Warning *log.Logger
+	Error *log.Logger
 )
 
 func init() {
-	info = log.New(os.stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
-	warning = log.New(os.stdout, "WARNING: ", log.Ldate|log.Ltime|log.Lshortfile)
-	error = log.New(os.stdout, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+	Info = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+	Warning = log.New(os.Stdout, "WARNING: ", log.Ldate|log.Ltime|log.Lshortfile)
+	Error = log.New(os.Stdout, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
 }
 
 func RTServer(args []string) {
 	port = args[0]
 	if port == "" {
 		port = "6789"
-		info.Println("port number is not specified. set to default 6789")
+		Info.Println("port number is not specified. set to default 6789")
 	}
 
 	username = strings.Split(args[1], ":")[0]
 	password = strings.Split(args[1], ":")[1]
 	if username == "" || password == "" {
-		error.Println("username and password not specified")
+		Error.Println("username and password not specified")
 		os.Exit(0)
 	} else if len(password) < 7 {
-		warning.Println("password too short")
+		Warning.Println("password too short")
 	}
 
 	// Simple static webserver
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", simpleAuthentication(http.FileServer(http.Dir("/root/media/"))))
+	mux.HandleFunc("/files/", simpleAuthentication(http.FileServer(http.Dir("/root/media/"))))
 	mux.HandleFunc("/magnet", torrentDownloadAssignment)
 	mux.HandleFunc("/status", statusCheck)
 	mux.HandleFunc("/remove", removeTorrent)
@@ -92,25 +92,15 @@ func torrentDownloadAssignment(w http.ResponseWriter, r *http.Request) {
 
 func statusCheck(w http.ResponseWriter, r *http.Request) {
 	if check(r.PostFormValue("username"), r.PostFormValue("password")) {
-		downloadLog := out.String()
-		if strings.Contains(downloadLog, "utpSocketUtpPacketsReceived") {
-			fmt.Println("Torrent Download Finished.")
-			fmt.Fprintf(w, "Torrent Download Finished.")
+		select {
+		case <-downloadFinished:
+			Info.Println("Torrent Download Finished")
+			fmt.Fprintf(w, "Torrent Download Finished")
 			return
-		}
-		info := strings.Split(downloadLog, "% downloading")
-		infoLength := len(info)
-		if infoLength < 2 {
-			fmt.Fprintf(w, "not started yet")
-		} else {
-			mostUpToDateStatus := info[infoLength - 2]
-			mostUpToDateStatusDownloaded := strings.Split(strings.Split(info[infoLength - 1], "(")[1], "/")[0]
-			mostUpToDateStatusOverallData := strings.Split(strings.Split(info[infoLength - 1], "/")[1], ")")[0]
-			length := len(mostUpToDateStatus)
-			statusPercentage := mostUpToDateStatus[length-3:]
-
-			fmt.Println(mostUpToDateStatusDownloaded)
-			fmt.Fprintf(w, statusPercentage + "%% " + mostUpToDateStatusDownloaded + "/"+ mostUpToDateStatusOverallData)
+		case <-time.After(time.Second):
+			Info.Println("Torrent Download Ongoing")
+			fmt.Fprintf(w, "Torrent Download Ongoing")
+			return
 		}
 	} else {
 		w.WriteHeader(http.StatusUnauthorized)
