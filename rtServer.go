@@ -6,18 +6,41 @@ import (
 	"strings"
 	"os/exec"
 	"os"
+	"log"
+	"github.com/gorilla/mux"
 )
 var (
 	port string
 	username string
 	password string
 	//downloadFinished chan string
+
+	info *log.Logger
+	warning *log.Logger
+	error *log.Logger
 )
+
+func init() {
+	info = log.New(os.stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+	warning = log.New(os.stdout, "WARNING: ", log.Ldate|log.Ltime|log.Lshortfile)
+	error = log.New(os.stdout, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+}
 
 func RTServer(args []string) {
 	port = args[0]
+	if port == "" {
+		port = "6789"
+		info.Println("port number is not specified. set to default 6789")
+	}
+
 	username = strings.Split(args[1], ":")[0]
 	password = strings.Split(args[1], ":")[1]
+	if username == "" || password == "" {
+		error.Println("username and password not specified")
+		os.Exit(0)
+	} else if len(password) < 7 {
+		warning.Println("password too short")
+	}
 
 	// Simple static webserver
 	mux := http.NewServeMux()
@@ -60,7 +83,7 @@ func torrentDownloadAssignment(w http.ResponseWriter, r *http.Request) {
 	if check(r.PostFormValue("username"), r.PostFormValue("password")) {
 		magnet := r.PostFormValue("magnet")
 		go download(magnet)
-		fmt.Fprintf(w, "Torrent Download Scheduled.")
+		fmt.Fprintf(w, "Torrent Download Scheduled")
 	} else {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintf(w, "Authentication Failed.")

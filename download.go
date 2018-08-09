@@ -10,6 +10,8 @@ import (
 var out bytes.Buffer
 
 func download(magnet string) error  {
+	info.Printf("magnet link: %s download scheduled\n", magnet)
+
 	_, err := exec.LookPath("torrent")
 	if err != nil {
 		log.Fatal("Please install anacrolix/torrent first.\n")
