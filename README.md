@@ -1,3 +1,4 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/BruceWangNo1/remote-torrent)](https://goreportcard.com/report/github.com/BruceWangNo1/remote-torrent)
 # remote-torrent
 
 Download Torrent Remotely and Retrieve Files Over HTTP at Full Speed without ISP Torrent Limitation.
