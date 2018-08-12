@@ -30,6 +30,10 @@ You may find downloaded files in the current directory after `rt client` finishe
 `rt server 8899 ryan:see_a_penny`
 `rt client ryan:see_a_penny 192.168.100.100:8899 "magnet:?rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyaaaaaaaaaaaaaaaaaaaaaaaaaaaaaannnnnnnnnnnnnnnnnnnnnnnnnnnnnn"`
 
+## Future Work
+
+- Implement client http partial request. For example, if the user already has a partial file from previous unfinished download, the new download process should pick up where it left off instead of restarting the download all over again.
+
 ## Contributing
 
 1. Fork it!
