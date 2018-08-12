@@ -20,17 +20,19 @@ Create a directory `/root/media` on your server to save files downloaded. Do not
 
 ## Command Usage
 
-Server side: run the below command in `/root/media` directory
+- Server side: run the below command in `/root/media` directory
 `rt server yourPortNumber username:password`  
+As most user would like to keep the process running after logging out ssh session, the following command will meets their needs:
+`nohup rt server yourPortNumber username:password > /root/rtserver.log &`
 
-Client side: `rt client username:password yourServerIP:yourServerPortNumber "desiredMagnetLink"`
+- Client side: `rt client username:password yourServerIP:yourServerPortNumber "desiredMagnetLink"`
 You may find downloaded files in the current directory after `rt client` finishes.
 
 ## Example
 `rt server 8899 ryan:see_a_penny`
 `rt client ryan:see_a_penny 192.168.100.100:8899 "magnet:?rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyaaaaaaaaaaaaaaaaaaaaaaaaaaaaaannnnnnnnnnnnnnnnnnnnnnnnnnnnnn"`
 
-## Future Work
+## To-do List
 
 - Implement client http partial request. For example, if the user already has a partial file from previous unfinished download, the new download process should pick up where it left off instead of restarting the download all over again.
 
