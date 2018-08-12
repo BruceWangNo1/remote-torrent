@@ -2,6 +2,7 @@ package rt
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/cheggaaa/pb"
 	"io"
 	"io/ioutil"
@@ -10,7 +11,6 @@ import (
 	"os"
 	"strings"
 	"time"
-	"errors"
 )
 
 var (
@@ -90,6 +90,12 @@ func downloadFiles(s []string) {
 			client := &http.Client{}
 			URL := "http://" + ipAndPort + "/lalaland/" + url.PathEscape(name)
 			req, err := http.NewRequest("GET", URL, nil)
+			if err != nil {
+				f.Close()
+				errorLog.Println(err)
+				infoLog.Println("retrying...")
+				continue
+			}
 			req.SetBasicAuth(username, password)
 			resp, err := client.Do(req)
 			if err != nil {
@@ -136,6 +142,11 @@ func sendMagnetLink() error {
 		v := url.Values{}
 		v.Set("magnet", magnet)
 		req, err := http.NewRequest("POST", URL, strings.NewReader(v.Encode()))
+		if err != nil {
+			errorLog.Println(err)
+			infoLog.Println("retrying...")
+			continue
+		}
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 		req.SetBasicAuth(username, password)
 		resp, err := client.Do(req)
@@ -167,6 +178,11 @@ func statusCheckFromClient() error {
 		client := &http.Client{}
 		URL := "http://" + ipAndPort + "/status"
 		req, err := http.NewRequest("GET", URL, nil)
+		if err != nil {
+			errorLog.Println(err)
+			infoLog.Println("retrying...")
+			continue
+		}
 		req.SetBasicAuth(username, password)
 		resp, err := client.Do(req)
 		if err != nil {
@@ -211,6 +227,11 @@ func downloadFilesRequest() error {
 		client := &http.Client{}
 		URL := "http://" + ipAndPort + "/filenames"
 		req, err := http.NewRequest("GET", URL, nil)
+		if err != nil {
+			errorLog.Println(err)
+			infoLog.Println("retrying...")
+			continue
+		}
 		req.SetBasicAuth(username, password)
 		resp, err := client.Do(req)
 		if err != nil {
@@ -248,6 +269,11 @@ func removeFilesOnServer() error {
 		client := &http.Client{}
 		URL := "http://" + ipAndPort + "/remove"
 		req, err := http.NewRequest("GET", URL, nil)
+		if err != nil {
+			errorLog.Println(err)
+			infoLog.Println("retrying...")
+			continue
+		}
 		req.SetBasicAuth(username, password)
 		resp, err := client.Do(req)
 		if err != nil {

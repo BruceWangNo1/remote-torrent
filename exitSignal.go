@@ -27,6 +27,12 @@ func exitSignalHandlers() {
 			client := &http.Client{}
 			URL := "http://" + ipAndPort + "/server-cleanup"
 			req, err := http.NewRequest("GET", URL, nil)
+			if err != nil {
+				errorLog.Println(err)
+				infoLog.Println("retrying...")
+				counter = counter + 1
+				continue
+			}
 			req.SetBasicAuth(username, password)
 			resp, err := client.Do(req)
 			if err != nil {

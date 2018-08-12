@@ -135,18 +135,17 @@ func addTorrents(client *torrent.Client) {
 			} else if strings.HasPrefix(arg, "infohash:") {
 				t, _ := client.AddTorrentInfoHash(metainfo.NewHashFromHex(strings.TrimPrefix(arg, "infohash:")))
 				return t
-			} else {
-				metaInfo, err := metainfo.LoadFromFile(arg)
-				if err != nil {
-					fmt.Fprintf(os.Stderr, "error loading torrent file %q: %s\n", arg, err)
-					os.Exit(1)
-				}
-				t, err := client.AddTorrent(metaInfo)
-				if err != nil {
-					log.Fatal(err)
-				}
-				return t
 			}
+			metaInfo, err := metainfo.LoadFromFile(arg)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "error loading torrent file %q: %s\n", arg, err)
+				os.Exit(1)
+			}
+			t, err := client.AddTorrent(metaInfo)
+			if err != nil {
+				log.Fatal(err)
+			}
+			return t
 		}()
 
 		if t == nil {
