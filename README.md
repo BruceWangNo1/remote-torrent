@@ -1,28 +1,41 @@
 # remote-torrent
 
 Download Torrent Remotely and Retrieve Files Over HTTP at Full Speed without ISP Torrent Limitation.
-This repository is an extension to [anacrolix/torrent](https://github.com/anacrolix/torrent) project to download torrent remotely to your server like your VPS and retrieve the downloaded files to your local machine over HTTP. As we know, some ISPs implement torrent limitation and also sometimes downloading torrent locally does not work well. So this is why I start this project.
+This repository is an extension to [anacrolix/torrent](https://github.com/anacrolix/torrent) project to download torrent remotely to your server like your VPS and retrieve the downloaded files to your local machine over HTTP. As we know, some ISPs implement torrent limitation and also sometimes downloading torrent locally does not work well. So this is why I started this project.
+
+## Features
+Once the server is set up, the user does not have to interact with the server manually. When the torrent download is finished, the client will automatically retrieve the downloads and remove intermedia downloads on the server side.
+If the user does not wish to continue at any moment, Ctrl + C will be captured by client which immediately sends request to clean up the server (shutdown the current torrent task and possibly remove downloaded contents) and then shut down itself gracefully.
 
 ## Notice
-Before installation, I think it is better for you to know that there is great web implementation [jpillora/cloud-torrent](https://github.com/jpillora/cloud-torrent) providing similar functionalities while offering great visual aids. You may still want to use this project if you want a simpler usage approach with just a single command on client side that takes care of everything for you.
+Before installation, I think it is better for you to know that there is great web implementation [jpillora/cloud-torrent](https://github.com/jpillora/cloud-torrent) providing similar functionalities while offering great visual aids. You may still want to use this project if you want a simpler approach with just a single command on client side that takes care of everything for you.
 
 ## Installation
 
 Install the library package with `go get github.com/brucewangno1/remote-torrent/rt`.
 
-## Development Enviroment
+## Enviroment Setup
 
-Ubuntu on server side and MacOS on client side.
-
-## Requirement
-
-Install [anacrolix/torrent](https://github.com/anacrolix/torrent) first on your server and wget on your client via brew.
+Create a directory `/root/media` on your server to save files downloaded. Do not store anything else in that directory because after every client torrent download request all files in that directory will be purged.
 
 ## Command Usage
 
-Server side: `rt server yourPortNumber username:password`  
-Client side: `rt client username:password yourServerIP:yourServerPortNumber magnetLink`
+Server side: run the below command in `/root/media` directory
+`rt server yourPortNumber username:password`  
 
-## Contribution
+Client side: `rt client username:password yourServerIP:yourServerPortNumber "desiredMagnetLink"`
+You may find downloaded files in the current directory after `rt client` finishes.
 
-Looking forward to your contribution.
+## Example
+`rt server 8899 ryan:see_a_penny`
+`rt client ryan:see_a_penny 192.168.100.100:8899 "magnet:?rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyaaaaaaaaaaaaaaaaaaaaaaaaaaaaaannnnnnnnnnnnnnnnnnnnnnnnnnnnnn"`
+
+## Contributing
+
+1. Fork it!
+2. Create your feature branch: `git checkout -b my-new-feature`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin my-new-feature`
+5. Submit a pull request :D
+
+If you have any questions about this project, feel free to create an issue.
