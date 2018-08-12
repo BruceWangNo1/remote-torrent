@@ -1,19 +1,20 @@
-package remote_torrent
+package rt
 
 import (
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
-	"net/http"
 )
 
+// Mode represents rt running mode, either "client" or "server"
 var Mode string
 
 func exitSignalHandlers() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
 
-	Info.Printf("close signal received: %+v\n", <-c)
+	infoLog.Printf("close signal received: %+v\n", <-c)
 
 	if Mode == "server" {
 		os.Exit(1)
@@ -29,21 +30,21 @@ func exitSignalHandlers() {
 			req.SetBasicAuth(username, password)
 			resp, err := client.Do(req)
 			if err != nil {
-				Error.Println(err)
-				Info.Println("retrying...")
+				errorLog.Println(err)
+				infoLog.Println("retrying...")
 				counter = counter + 1
 				continue
 			}
 
 			if resp.StatusCode == http.StatusUnauthorized {
-				Error.Println("Authentication failed")
+				errorLog.Println("Authentication failed")
 				return
 			} else if resp.StatusCode == http.StatusOK {
-				Info.Println("Server cleanup successful")
+				infoLog.Println("Server cleanup successful")
 				break
 			} else {
 				counter = counter + 1
-				Error.Printf("status code: %v\n", resp.StatusCode)
+				errorLog.Printf("status code: %v\n", resp.StatusCode)
 				continue
 			}
 		}

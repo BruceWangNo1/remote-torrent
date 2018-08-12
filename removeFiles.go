@@ -1,11 +1,11 @@
-package remote_torrent
+package rt
 
 import (
 	"os"
 	"path/filepath"
 )
 
-func RemoveContents(dir string) error {
+func removeContents(dir string) error {
 	d, err := os.Open(dir)
 	if err != nil {
 		return err

@@ -1,15 +1,15 @@
-package remote_torrent
+package rt
 
 import (
-	"log"
+	"expvar"
 	"fmt"
-	"github.com/anacrolix/torrent"
+	"github.com/anacrolix/envpprof"
 	"github.com/anacrolix/tagflag"
+	"github.com/anacrolix/torrent"
+	"github.com/anacrolix/torrent/metainfo"
+	"log"
 	"net"
 	"net/http"
-	"expvar"
-	"github.com/anacrolix/envpprof"
-	"github.com/anacrolix/torrent/metainfo"
 	"os"
 	"strings"
 	"time"
@@ -37,9 +37,9 @@ type torrentInfo struct {
 	BC int64 `json:"bc"`
 }
 
-var	(
-	serverSideTorrentInfo torrentInfo
-	torrentError chan error
+var (
+	serverSideTorrentInfo      torrentInfo
+	torrentError               chan error
 	torrentErrorForHTTPHandler error
 )
 
@@ -48,7 +48,7 @@ func init() {
 	torrentError = make(chan error, 1)
 }
 
-func download(magnet string) (err error)  {
+func download(magnet string) (err error) {
 	select {
 	case <-downloadInProgress:
 		downloadInProgress <- struct{}{}
@@ -58,7 +58,7 @@ func download(magnet string) (err error)  {
 	downloadFinished = false
 
 	//log.SetFlags(log.LstdFlags | log.Lshortfile)
-	Info.Printf("magnet link: %s download scheduled\n", magnet)
+	infoLog.Printf("magnet link: %s download scheduled\n", magnet)
 	defer envpprof.Stop()
 	flags.Torrent = []string{magnet}
 	flags.Seed = false
@@ -69,7 +69,7 @@ func download(magnet string) (err error)  {
 
 	client, err := torrent.NewClient(clientConfig)
 	if err != nil {
-		Error.Printf("error creating client: %s\n", err)
+		errorLog.Printf("error creating client: %s\n", err)
 		return err
 	}
 	defer client.Close()
@@ -86,9 +86,9 @@ func download(magnet string) (err error)  {
 	addTorrents(client)
 	if client.WaitAll() {
 		downloadFinished = true
-		Info.Println("downloaded ALL the torrents")
+		infoLog.Println("downloaded ALL the torrents")
 	} else {
-		Info.Println("y u no complete torrents?!")
+		infoLog.Println("y u no complete torrents?!")
 		return
 	}
 	if flags.Seed {
@@ -110,7 +110,7 @@ func addTorrents(client *torrent.Client) {
 			if strings.HasPrefix(arg, "magnet:") {
 				t, err := client.AddMagnet(arg)
 				if err != nil {
-					Error.Printf("error adding magnet: %s\n", err)
+					errorLog.Printf("error adding magnet: %s\n", err)
 					torrentError <- err
 					return nil
 				}
@@ -200,15 +200,15 @@ func outputStats(cl *torrent.Client) {
 
 func clientSignalHandler(client *torrent.Client) {
 	<-clientCleanupSignal
-	Info.Println("close signal received\n")
+	infoLog.Println("close signal received")
 	client.Close()
-	RemoveContents(mediaDir)
+	removeContents(mediaDir)
 	clientCleanupFinished <- struct{}{}
 }
 
 func torrentErrorHandler(client *torrent.Client) {
 	err := <-torrentError
-	Error.Printf("torrent error: %v\n", err)
+	errorLog.Printf("torrent error: %v\n", err)
 	client.Close()
 	torrentErrorForHTTPHandler = err
 }

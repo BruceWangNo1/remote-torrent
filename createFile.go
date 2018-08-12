@@ -1,9 +1,9 @@
-package remote_torrent
+package rt
 
 import (
+	"log"
 	"os"
 	"strings"
-	"log"
 )
 
 func createFile(name string) (f *os.File, err error) {
@@ -11,7 +11,7 @@ func createFile(name string) (f *os.File, err error) {
 	if err != nil {
 		log.Fatalf("error creating %s directory: %s", name, err.Error())
 	}
-	f, err = os.OpenFile(name, os.O_CREATE | os.O_WRONLY, 0666)
+	f, err = os.OpenFile(name, os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		log.Fatalf("Unable to open %s file: %s", name, err.Error())
 	}
