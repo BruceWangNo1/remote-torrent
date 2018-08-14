@@ -3,8 +3,8 @@ package rt
 import (
 	"log"
 	"os"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 func getFile(name string) (f *os.File, byteRange string) {
@@ -12,10 +12,10 @@ func getFile(name string) (f *os.File, byteRange string) {
 	if err != nil {
 		log.Fatalf("error creating %s directory: %s", name, err.Error())
 	}
-	
+
 	if stat, err := os.Stat(name); err == nil {
 		byteRange = strconv.FormatInt(stat.Size(), 10) + "-"
-		f, err = os.OpenFile(name, os.O_APPEND | os.O_WRONLY, 0611)
+		f, err = os.OpenFile(name, os.O_APPEND|os.O_WRONLY, 0611)
 		if err != nil {
 			log.Fatalf("Unable to open %s file: %s", name, err.Error())
 		}

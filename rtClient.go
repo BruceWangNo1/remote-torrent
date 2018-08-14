@@ -82,7 +82,7 @@ func downloadFiles(s []string) {
 
 		for {
 			//infoLog.Println(name)
-			f, byteRange:= getFile(name)
+			f, byteRange := getFile(name)
 
 			client := &http.Client{}
 			URL := "http://" + ipAndPort + "/lalaland/" + url.PathEscape(name)
