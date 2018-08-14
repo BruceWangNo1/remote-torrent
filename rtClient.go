@@ -82,10 +82,7 @@ func downloadFiles(s []string) {
 
 		for {
 			//infoLog.Println(name)
-			f, err := createFile(name)
-			if err != nil {
-				errorLog.Fatalf("Unable to open %s file: %s", name, err.Error())
-			}
+			f, byteRange:= getFile(name)
 
 			client := &http.Client{}
 			URL := "http://" + ipAndPort + "/lalaland/" + url.PathEscape(name)
@@ -95,6 +92,9 @@ func downloadFiles(s []string) {
 				errorLog.Println(err)
 				infoLog.Println("retrying...")
 				continue
+			}
+			if byteRange != "" {
+				req.Header.Set("Range", "bytes="+byteRange)
 			}
 			req.SetBasicAuth(username, password)
 			resp, err := client.Do(req)

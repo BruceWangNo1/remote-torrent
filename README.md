@@ -5,8 +5,10 @@ Download Torrent Remotely and Retrieve Files Over HTTP at Full Speed without ISP
 This repository is an extension to [anacrolix/torrent](https://github.com/anacrolix/torrent) project to download torrent remotely to your server like your VPS and retrieve the downloaded files to your local machine over HTTP. As we know, some ISPs implement torrent limitation and also sometimes downloading torrent locally does not work well. So this is why I started this project.
 
 ## Features
-Once the server is set up, the user does not have to interact with the server manually. When the torrent download is finished, the client will automatically retrieve the downloads and remove intermedia downloads on the server side.
-If the user does not wish to continue at any moment, Ctrl + C will be captured by client which immediately sends request to clean up the server (shutdown the current torrent task and possibly remove downloaded contents) and then shut down itself gracefully.
+1. Once the server is set up, the user does not have to interact with the server manually. When the torrent download is finished, the client will automatically retrieve the downloads and remove intermedia downloads on the server side.
+
+2. If the user does not wish to continue at any moment, Ctrl + C will be captured by client which immediately sends request to clean up the server (shutdown the current torrent task and possibly remove downloaded contents) and then shut down itself gracefully.
+3. Client http partial request implemented. For example, if the user already has a partial file from the previous unfinished download process, the new download process picks up where it left off instead of restarting the download all over again.
 
 ## Notice
 Before installation, I think it is better for you to know that there is great web implementation [jpillora/cloud-torrent](https://github.com/jpillora/cloud-torrent) providing similar functionalities while offering great visual aids. You may still want to use this project if you want a simpler approach with just a single command on client side that takes care of everything for you.
@@ -35,7 +37,7 @@ You may find downloaded files in the current directory after `rt client` finishe
 
 ## To-do List
 
-- Implement client http partial request. For example, if the user already has a partial file from previous unfinished download, the new download process should pick up where it left off instead of restarting the download all over again.
+
 
 ## Contributing
 
