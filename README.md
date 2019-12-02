@@ -35,7 +35,7 @@ You may find downloaded files in the current directory after `rt client` finishe
 ## Example
 `rt server 8899 ryan:see_a_penny`
 
-`rt client ryan:see_a_penny 192.168.100.100:8899 "magnet:?rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyaaaaaaaaaaaaaaaaaaaaaaaaaaaaaannnnnnnnnnnnnnnnnnnnnnnnnnnnnn"`
+`rt client ryan:see_a_penny 192.168.100.100:8899 "magnet:?xt=urn:btih:194257a7bf4eaea978f4b5b7fbd3b4efcdd99e43&dn=ubuntu-18.04.3-live-server-amd64.iso"`
 
 ## To-do List
 
